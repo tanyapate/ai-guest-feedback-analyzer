@@ -1,2 +1,2 @@
 # ai-guest-feedback-analyzer
-Spring Boot REST API for analyzing guest review text, currently integrating OpenAI API for sentiment and issue detection.
+A Spring Boot application that analyzes guest feedback with OpenAI, returning sentiment, key themes, and actionable insights from review text. It includes a REST API, configurable OpenAI model settings, tests, and a safe example properties file for local setup.
