@@ -1,8 +1,0 @@
-com\example\aiguestfeedbackanalyzer\service\AnalysisService.class
-com\example\aiguestfeedbackanalyzer\AiGuestFeedbackAnalyzerApplication.class
-com\example\aiguestfeedbackanalyzer\config\RestTemplateConfig.class
-com\example\aiguestfeedbackanalyzer\model\AnalysisRequest.class
-com\example\aiguestfeedbackanalyzer\model\AnalysisResponse.class
-com\example\aiguestfeedbackanalyzer\model\ReviewRequest.class
-com\example\aiguestfeedbackanalyzer\controller\AnalysisController.class
-com\example\aiguestfeedbackanalyzer\service\OpenAiAnalysisService.class
