@@ -68,6 +68,4 @@ http://localhost:8080/api/analyze
 |--------|----------|-------------|
 | POST | `/api/analyze` | Analyzes a guest review and returns structured feedback |
 
-## Notes
-- Never commit your real API key to GitHub
-- See `application-example.properties` for the expected configuration format
+
