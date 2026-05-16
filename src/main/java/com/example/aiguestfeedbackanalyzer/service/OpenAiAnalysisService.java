@@ -1,7 +1,10 @@
 package com.example.aiguestfeedbackanalyzer.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,14 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 public class OpenAiAnalysisService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenAiAnalysisService.class);
-    private static final String RESPONSES_API_URL = "https://api.openai.com/v1/responses";
+    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
     private static final String ANALYSIS_INSTRUCTIONS = """
             Analyze the guest review and return the result in this exact format:
 
@@ -41,7 +44,7 @@ public class OpenAiAnalysisService {
     public OpenAiAnalysisService(
             RestTemplate restTemplate,
             @Value("${openai.api.key:}") String apiKey,
-            @Value("${openai.model:gpt-5}") String model) {
+            @Value("${openai.model:gpt-4o}") String model) {
         this.restTemplate = restTemplate;
         this.apiKey = apiKey;
         this.model = model;
@@ -60,13 +63,15 @@ public class OpenAiAnalysisService {
 
         Map<String, Object> requestBody = Map.of(
                 "model", model,
-                "instructions", ANALYSIS_INSTRUCTIONS,
-                "input", text
+                "messages", List.of(
+                        Map.of("role", "system", "content", ANALYSIS_INSTRUCTIONS),
+                        Map.of("role", "user", "content", text)
+                )
         );
 
         try {
             JsonNode response = restTemplate.postForObject(
-                    RESPONSES_API_URL,
+                    OPENAI_URL,
                     new HttpEntity<>(requestBody, headers),
                     JsonNode.class
             );
@@ -105,29 +110,11 @@ public class OpenAiAnalysisService {
             return "";
         }
 
-        JsonNode outputText = response.path("output_text");
-        if (outputText.isTextual()) {
-            return outputText.asText();
-        }
-
-        JsonNode output = response.path("output");
-        if (output.isArray()) {
-            StringBuilder text = new StringBuilder();
-            for (JsonNode item : output) {
-                JsonNode content = item.path("content");
-                if (!content.isArray()) {
-                    continue;
-                }
-                for (JsonNode contentItem : content) {
-                    JsonNode contentText = contentItem.path("text");
-                    if (contentText.isTextual()) {
-                        text.append(contentText.asText());
-                    }
-                }
-            }
-            return text.toString();
-        }
-
-        return "";
+        return response
+                .path("choices")
+                .path(0)
+                .path("message")
+                .path("content")
+                .asText("");
     }
 }
