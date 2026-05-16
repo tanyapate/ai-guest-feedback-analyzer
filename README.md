@@ -43,7 +43,7 @@ Key Issues:
 
 1. Clone the repo
 ```
-git clone https://github.com/your-username/ai-guest-feedback-analyzer.git
+git clone https://github.com/tanyapate/ai-guest-feedback-analyzer.git
 ```
 
 2. Add your OpenAI API key to `src/main/resources/application.properties`
